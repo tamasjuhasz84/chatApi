@@ -1,0 +1,69 @@
+<%- include('navbar'); -%>
+<link rel="stylesheet" type="text/css" href="./login-styles.css">
+<div id="datadiv" data-name=<%= username %>></div>>
+    <div class="form">
+        <form>
+            <input type="text" placeholder="üzenet írása" name="chatField">
+            <button>Küld</button>
+        </form>
+    </div>
+</div>
+<div class="chatBox">
+    <h3>Üdvözöllek a chatApi-ban <%= username %>!</h3>
+    <ul></ul>
+    <p class="activity"></p>
+</div>
+<script src="socket.io/socket.io.js"></script>
+<script>
+const socket = io()
+const activity = document.querySelector('.activity')
+const msgInput = document.querySelector('input')
+var name = document.getElementById('datadiv').dataset.name
+
+// ez a beírt szöveget emitáló funkció
+function sendMessage(beirtSzoveg) {
+    beirtSzoveg.preventDefault()
+    if (msgInput.value) {
+        socket.emit('message', msgInput.value)
+        msgInput.value = ""
+    }
+    msgInput.focus()
+}
+
+// gombnyomásra futtatja az elküldő függvényt
+document.querySelector('form')
+    .addEventListener('submit', sendMessage)
+
+// A beírt szövegeket hallgatja
+socket.on("message", (data) => {
+    activity.textContent = ""
+    const li = document.createElement('li')
+    li.textContent = data
+    document.querySelector('ul').appendChild(li)
+})
+
+// A beírt szövegeket hallgatja
+socket.on("commonMessage", (data) => {
+    activity.textContent = ""
+    const li = document.createElement('li')
+    li.textContent = data
+    document.querySelector('ul').appendChild(li)
+})
+
+// ez figyeli, hogy a másik félnek inputjában a keypress-t
+msgInput.addEventListener('keypress', () => {
+    socket.emit('activity', socket.id.substring(0, 5))
+})
+
+let activityTimer
+
+socket.on("activity", (name) => {
+    activity.textContent = `${name} éppen ír...`
+
+    // ha nem ír, akkor vár 3 másodpercet, és leveszi az éppen ír feliratot
+    clearTimeout(activityTimer)
+    activityTimer = setTimeout(() => {
+        activity.textContent = ""
+    }, 3000)
+})
+</script>
