@@ -1,18 +1,22 @@
-<link rel="stylesheet" type="text/css" href="./login-styles.css">
+<link rel="stylesheet" type="text/css" href="./login-styles.css" />
 <div class="login-page">
   <div class="form">
     <h2><%= errorMes %></h2>
     <form action="/process_login" method="post" class="login-form">
       <% if (createUser) { %>
-        <div class="success"><%= createUser %> nevű felhasználót sikeresen létrehozta. Jelentkezzen be!</div>
-      <% } %>
-      <% if (loginError) { %>
-        <div class="alert"><%= loginError %></div>
+      <div class="success">
+        <%= createUser %> nevű felhasználót sikeresen létrehozta. Jelentkezzen
+        be!
+      </div>
+      <% } %> <% if (loginError) { %>
+      <div class="alert"><%= loginError %></div>
       <% } %>
       <input type="text" placeholder="felhasználónév" name="username" />
-      <input type="password" placeholder="jelszó" name="password"/>
+      <input type="password" placeholder="jelszó" name="password" />
       <button>belépés</button>
-      <p class="message">Még nem regisztráltál? <a href="/create">Új regisztráció</a></p>
+      <p class="message">
+        Még nem regisztráltál? <a href="/create">Új regisztráció</a>
+      </p>
     </form>
   </div>
 </div>

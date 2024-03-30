@@ -1,13 +1,21 @@
-<link rel="stylesheet" type="text/css" href="./login-styles.css">
+<link rel="stylesheet" type="text/css" href="./login-styles.css" />
 <div class="create-page">
   <div class="form">
     <% if (createUser) { %>
-      <div class="alert"><%= createUser %> nevű felhasználója már létezik az adatbázisban. Kérjük válasszon másikat.</div>
+    <div class="alert">
+      <%= createUser %> nevű felhasználója már létezik az adatbázisban. Kérjük
+      válasszon másikat.
+    </div>
     <% } %>
     <form action="/process_create" method="post" class="create-form">
-      <input type="text" placeholder="felhasználónév" name="username" required />
-      <input type="password" placeholder="jelszó" name="password" required/>
-      <input type="email" placeholder="e-mail" name="email" required/>
+      <input
+        type="text"
+        placeholder="felhasználónév"
+        name="username"
+        required
+      />
+      <input type="password" placeholder="jelszó" name="password" required />
+      <input type="email" placeholder="e-mail" name="email" required />
       <button>regisztrál</button>
     </form>
   </div>
