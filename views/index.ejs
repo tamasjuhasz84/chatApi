@@ -2,15 +2,19 @@
 <link rel="stylesheet" type="text/css" href="./login-styles.css">
 <div id="datadiv" data-name=<%= username %>></div>>
     <div class="form">
-        <form>
+        <form id="chatForm">
             <input type="text" placeholder="üzenet írása" name="chatField">
             <button>Küld</button>
         </form>
     </div>
 </div>
+<h3>Üdvözöllek a chatApi-ban <%= username %>!</h3>
 <div class="chatBox">
-    <h3>Üdvözöllek a chatApi-ban <%= username %>!</h3>
-    <ul></ul>
+    <ul>
+        <% for(var i = 0; i < fullHistory.length; i++) { %>
+            <li><%= fullHistory[i].conversation %></li>
+        <% } %>
+    </ul>
     <p class="activity"></p>
 </div>
 <script src="socket.io/socket.io.js"></script>
@@ -20,7 +24,7 @@ const activity = document.querySelector('.activity')
 const msgInput = document.querySelector('input')
 var name = document.getElementById('datadiv').dataset.name
 
-// ez a beírt szöveget emitáló funkció
+// ez a beírt szöveget szervernek elküldő függvény
 function sendMessage(beirtSzoveg) {
     beirtSzoveg.preventDefault()
     if (msgInput.value) {
@@ -31,7 +35,7 @@ function sendMessage(beirtSzoveg) {
 }
 
 // gombnyomásra futtatja az elküldő függvényt
-document.querySelector('form')
+document.getElementById('chatForm')
     .addEventListener('submit', sendMessage)
 
 // A beírt szövegeket hallgatja
@@ -42,7 +46,7 @@ socket.on("message", (data) => {
     document.querySelector('ul').appendChild(li)
 })
 
-// A beírt szövegeket hallgatja
+// A kapcsolat szövegeket hallgatja
 socket.on("commonMessage", (data) => {
     activity.textContent = ""
     const li = document.createElement('li')

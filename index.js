@@ -68,6 +68,16 @@ const User = sequelize.define(
   }
 );
 
+const Conversations = sequelize.define(
+  "conversations",
+  {
+    conversation: DataTypes.TEXT,
+  },
+  {
+    tableName: "userConversations",
+  }
+);
+
 // express szerverrel kapcsolatos
 app.set("views", path.join(__dirname, "/views"));
 app.set("view engine", "ejs");
@@ -97,12 +107,15 @@ io.on("connection", (socket) => {
     cookies.username + " kapcsolódott a beszélgetéshez"
   );
 
-  //  a beírt üzenetet (data)
+  //  a beírt üzenetet hallgatja és visszaküldi a kliensnek a felhasználóval megspékelve
   socket.on("message", (data) => {
-    io.emit("message", `${cookies.username}: ${data}`);
+    (async () => {
+      await Conversations.create({ conversation: `${cookies.username}: ${data}` });
+    })();
+    io.emit("message", `${cookies.username}: ${data}`); 
   });
 
-  // mindenkinek küldi, ha valani kilép
+  // mindenkinek küldi, ha valaki kilép
   socket.on("disconnect", () => {
     socket.broadcast.emit(
       "commonMessage",
@@ -191,13 +204,17 @@ app.post("/process_create", (req, res) => {
 
 app.get("/index", (req, res) => {
   res.clearCookie("loginError");
-  if (req.cookies.username) {
-    res.render("index", {
-      username: req.cookies.username,
-    });
-  } else {
-    res.redirect("/");
-  }
+  (async () => {
+    const fullHistory = await sequelize.query("SELECT conversation FROM `userConversations`", { type: QueryTypes.SELECT })
+    if (req.cookies.username) {
+      res.render("index", {
+        username: req.cookies.username,
+        fullHistory: fullHistory
+      });
+    } else {
+      res.redirect("/");
+    }
+  })();
 });
 
 app.get("/logout", (req, res) => {
