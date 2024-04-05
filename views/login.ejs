@@ -19,4 +19,10 @@
       </p>
     </form>
   </div>
+  <div class="form">
+    <p>A rabbitMQ adja vissza a regisztrált felhasználók neveit. Az api_requests nevü queue-ból jön: </p> 
+    <% for(var i = 0; i < possibleUsers.length; i++) { %>
+      <p><%= possibleUsers[i].name %></p>
+    <% } %>
+  </div>
 </div>

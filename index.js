@@ -8,6 +8,7 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cookie from "cookie";
 import log4js from "log4js";
+import amqp from "amqplib/callback_api.js";
 
 // constansok
 const sequelize = new Sequelize({
@@ -77,6 +78,9 @@ const Conversations = sequelize.define(
     tableName: "userConversations",
   }
 );
+const rabbitUrl = 'amqp://localhost';
+var rabbitMsg;
+const queue = 'api_requests';
 
 // express szerverrel kapcsolatos
 app.set("views", path.join(__dirname, "/views"));
@@ -129,12 +133,36 @@ io.on("connection", (socket) => {
   });
 });
 
+//rabbitMQ itt érkeztetem az api_requests queue-ban lévő üzeneteket
+amqp.connect(rabbitUrl, function(error0, connection) {
+    if (error0) {
+        throw error0;
+    }
+    //csatorna létrehozása
+    connection.createChannel(function(error1, channel) {
+        if (error1) {
+            throw error1;
+        }
+        // Csatorna deklarálása
+        channel.assertQueue(queue, {
+            durable: false
+        });
+        // a buffert fel kell dolgozni (toString, parse, stb...)
+        channel.consume(queue, function(msg) {
+          rabbitMsg = JSON.parse(msg.content);
+        }, {
+            noAck: true
+        });
+    });
+});
+
 // oldalak renderelése
 app.get("/", (req, res) => {
   res.clearCookie("createUser");
   res.render("login", {
-    createUser: req.cookies.createUser,
-    loginError: req.cookies.loginError,
+     createUser: req.cookies.createUser,
+     loginError: req.cookies.loginError,
+     possibleUsers: rabbitMsg
   });
 });
 
