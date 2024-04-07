@@ -36,7 +36,7 @@ var rabbitMsg;
       const response = await sequelize.query("SELECT name FROM `registredUsers`", { type: QueryTypes.SELECT });
       rabbitMsg = response
     })();
-// Kapcsolódás a RabbitMQ-hez
+// Első kapcsolódás a RabbitMQ-hoz
 amqp.connect('amqp://localhost', function(error0, connection) {
   if (error0) {
     throw error0;
@@ -46,18 +46,34 @@ amqp.connect('amqp://localhost', function(error0, connection) {
     if (error1) {
       throw error1;
     }
-    var queue = 'api_requests';
-    var msg = JSON.stringify(rabbitMsg)
+    var queue = 'task_queue';
+    var msg = JSON.stringify(rabbitMsg);
+    var exchange = 'logs';
+    var logMsg = "A log küldés ideje: " + new Date().toLocaleString();
 
     // Csatorna deklarálása
+    //a durable a sort állítja tartósra vagy sem (mindkét oldalon kell). A tartós sor újraindítás esetén sem veszik el.
     channel.assertQueue(queue, {
-      durable: false
+      durable: true
     });
     //itt már Bufferként megy a queue-ra (fogadó oldalon kell a parse)
-    channel.sendToQueue(queue, Buffer.from(msg));
+    //itt a persistent szintén azért van, hogy ne vesszenek el az üzik. A publisher confirms megoldás jobb.
+    channel.sendToQueue(queue, Buffer.from(msg), {persistent: true});
+    console.log(" Az üzenet el lett küldve a sorba: ", msg);
+    //Elérhető exchange típusok: direct, topic, headers, fanout. Itt most fanout lesz
+    channel.assertExchange(exchange, 'fanout', {
+      durable: false
+    });
+    // a '' azért kell, mert nem akarjuk semmilyen sorba küldeni, csak a logokba
+    channel.publish(exchange, '', Buffer.from(logMsg));
+    console.log(" Ez a log lett elküldve: ", logMsg);
   });
+  setTimeout(function() {
+    connection.close();
+    process.exit(0)
+  }, 9000);
 });
-  
+ 
   // Szerver indítása
   app.listen(port, () => {
     console.log(`A szerver a http://localhost:${port} címen fut.`);

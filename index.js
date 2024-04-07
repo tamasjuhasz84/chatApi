@@ -78,9 +78,6 @@ const Conversations = sequelize.define(
     tableName: "userConversations",
   }
 );
-const rabbitUrl = 'amqp://localhost';
-var rabbitMsg;
-const queue = 'api_requests';
 
 // express szerverrel kapcsolatos
 app.set("views", path.join(__dirname, "/views"));
@@ -133,6 +130,12 @@ io.on("connection", (socket) => {
   });
 });
 
+//rabbitMQ változók
+const rabbitUrl = 'amqp://localhost';
+var rabbitMsg;
+const queue = 'task_queue';
+var exchange = 'logs';
+
 //rabbitMQ itt érkeztetem az api_requests queue-ban lévő üzeneteket
 amqp.connect(rabbitUrl, function(error0, connection) {
     if (error0) {
@@ -144,14 +147,42 @@ amqp.connect(rabbitUrl, function(error0, connection) {
             throw error1;
         }
         // Csatorna deklarálása
-        channel.assertQueue(queue, {
-            durable: false
+        //a durable a sort állítja tartósra vagy sem. A tartós sor újraindítás esetén sem veszik el.
+        channel.assertExchange(exchange, 'fanout', {
+          durable: false
         });
+
+        channel.assertQueue(queue, {
+            durable: true
+        });
+        channel.prefetch(1);
         // a buffert fel kell dolgozni (toString, parse, stb...)
         channel.consume(queue, function(msg) {
           rabbitMsg = JSON.parse(msg.content);
+          console.log(" Ez a sorból jön: ", rabbitMsg);
+          setTimeout(function() {
+            console.log(" Kézbesült!");
+            channel.ack(msg);
+          }, 10000);
         }, {
+            //nincs visszaigazolás funkció kapcsolása
+            noAck: false
+        });
+        channel.assertQueue('', {
+          exclusive: true
+        }, function(error2, q) {
+          if (error2) {
+            throw error2;
+          }
+          channel.bindQueue(q.queue, exchange, '');
+    
+          channel.consume(q.queue, function(logMsg) {
+            if(logMsg.content) {
+              console.log(" Ez a logos cucc:", logMsg.content.toString());
+            }
+          }, {
             noAck: true
+          });
         });
     });
 });
