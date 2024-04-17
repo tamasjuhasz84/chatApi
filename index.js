@@ -8,7 +8,7 @@ import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import cookie from 'cookie'
 import log4js from 'log4js'
-import amqp from 'amqplib/callback_api.js'
+import amqp from 'amqplib/callback_api.js';;
 
 // constansok
 const sequelize = new Sequelize({
