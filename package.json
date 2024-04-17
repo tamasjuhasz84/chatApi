@@ -10,7 +10,8 @@
     "start": "node .",
     "dev": "start npm run start-watch && npm run lint && nodemon .",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "lint:fix": "eslint --fix --ext .js,.jsx ."
+    "lint:fix": "eslint --fix --ext .js,.jsx .",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
@@ -42,13 +43,5 @@
     "lint-staged": "^15.2.2",
     "log4js": "^6.9.1",
     "nodemon": "^3.1.0"
-  },
-  "lint-staged": {
-    "*.js": "eslint --fix"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   }
 }
