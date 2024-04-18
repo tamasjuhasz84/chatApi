@@ -13,6 +13,9 @@
     "lint:fix": "eslint --fix --ext .js,.jsx .",
     "prepare": "husky"
   },
+  "release": {
+    "branches": ["main"]
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -23,6 +26,7 @@
     "cookie-parser": "^1.4.6",
     "ejs": "^3.1.9",
     "express": "^4.19.2",
+    "semantic-release": "^23.0.8",
     "sequelize": "^6.37.1",
     "sequelize-cli": "^6.6.2",
     "socket.io": "^4.7.5",
