@@ -21,3 +21,5 @@ app.log-ban a főbb login események kerülnek logolásra
 socket szerver figyeli: belépés, kilépés, üzenetküldés, írás aktivítás
 
 oldalakat server rendereli (Embedded JavaScript)
+
+semantic-release workflowt csinál
