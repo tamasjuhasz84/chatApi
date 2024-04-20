@@ -278,6 +278,7 @@ app.get('/index', (req, res) => {
   })()
 })
 
+// kilépést kezeli
 app.get('/logout', (req, res) => {
   logger.info(req.cookies.username, ' kijelentkezett!')
   res.clearCookie('username')
