@@ -22,4 +22,4 @@ socket szerver figyeli: belépés, kilépés, üzenetküldés, írás aktivítá
 
 oldalakat server rendereli (Embedded JavaScript)
 
-semantic-release workflowt csinál
+semantic-release workflowt csinál, verziót emel
