@@ -1,0 +1,17 @@
+name: Semantic Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Semantic Release
+        run: npx semantic-release
+        env:
+          GH_TOKEN: ${{ secrets.ChatApiToken }}
