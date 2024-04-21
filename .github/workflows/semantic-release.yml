@@ -21,6 +21,6 @@ jobs:
         run: npm ci
 
       - name: Semantic Release
-        run: npx semantic-release --no-ci
+        run: yarn semantic-release --no-ci
         env:
-          GH_TOKEN: ${{ secrets.ChatApiToken }}
+          GH_TOKEN: ${{ secrets.CHATAPITOKEN }}
