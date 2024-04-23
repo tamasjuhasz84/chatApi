@@ -6,7 +6,7 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   release:
@@ -33,4 +33,3 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.CHATAPITOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
