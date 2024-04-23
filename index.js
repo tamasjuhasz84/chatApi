@@ -1,3 +1,4 @@
+// workflow teszteléséhez komment
 // importok
 import { Sequelize, DataTypes, QueryTypes } from 'sequelize'
 import express from 'express'
