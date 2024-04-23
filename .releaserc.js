@@ -6,5 +6,5 @@ export default {
     '@semantic-release/changelog',
     '@semantic-release/git'
   ],
-  githubToken: process.env.GH_TOKEN,
+  githubToken: process.env.GH_TOKEN
 }
